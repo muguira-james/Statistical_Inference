@@ -1,0 +1,58 @@
+---
+title: "Statistical Inference Project 1"
+author: "James Muguira, D.M."
+date: "05/20/2015"
+output: html_document
+---
+
+Synopsis
+
+Overview
+
+
+```{r}
+library(ggplot2)
+numOSim <- 1000
+n <- 40
+lambda <- 0.2
+set.seed(1234)
+data <- matrix(rexp(numOSim * n, rate=lambda), numOSim)
+data_mean <- apply(data, 1, mean)
+hist(data_mean)
+```
+
+Now, compare the simlated distribution to the theoretical distribution.
+
+
+Sample Mean verses Theortical Mean
+
+```{r}
+theory_mean <- 1/lambda
+theory_mean
+simDist <- round(mean(data_mean), 3)
+simDist
+```
+
+
+```{r}
+dataDF <- data.frame(data_mean)
+grph <- ggplot(dataDF, aes(x=data_mean))
+grph <- grph + geom_histogram(aes(y=..density..))
+grph + geom_density(colour="red", size=1)
+```
+
+How well does the 
+Now, analyize the theoretical and simulation and distribution variance
+
+Sample Variance verses Theoretical Variance
+
+```{r}
+theoryVar <- round(((1/lambda)^2)/n, 3)
+theorySD <- round((1/lambda)/sqrt(n), 3)
+theoryVar
+theorySD
+```
+
+Does the exponential distribution approximate a normal distribution?
+
+Distribution Approximately Normally Distributed?
