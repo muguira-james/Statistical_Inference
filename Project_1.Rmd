@@ -1,58 +1,82 @@
 ---
 title: "Statistical Inference Project 1"
 author: "James Muguira, D.M."
-date: "05/20/2015"
+date: "05/24/2015"
 output: html_document
 ---
 
-Synopsis
+# Overview
 
-Overview
+In this project we have been asked to investigate the exponential distribution by comparing it with the Central Limit Theorem.  We will use R and simulate the distribution through this R form:
 
+rexp(n, lambda)
+
+Where:
+
+* Lambda is the rate
+
+* mean of the exponential distribution is 1 / lambda
+
+* Standard Deviation for the exponential distribution is 1 / lambda.
+
+For this investigation lambda is fixed at 0.2 for all trials. We investigate the averages of 40 exponentials and we under take a 1000 replications.
+
+This investigation will answer cover 3 areas:
+
+* 1.  Compare the sample and theoretical mean of the distribution
+
+* 2.  Compare the theoretical and sample variance of the distribution
+
+* 3.  Show that the exponential distribution is approximately normal.
+
+# Initial setup
 
 ```{r}
 library(ggplot2)
-numOSim <- 1000
+numberOfSimulations <- 1000
 n <- 40
 lambda <- 0.2
 set.seed(1234)
-data <- matrix(rexp(numOSim * n, rate=lambda), numOSim)
+data <- matrix(rexp(numberOfSimulations * n, rate=lambda), numberOfSimulations)
 data_mean <- apply(data, 1, mean)
-hist(data_mean)
+hist(data_mean, main="Distribution of averages")
 ```
 
-Now, compare the simlated distribution to the theoretical distribution.
-
-
-Sample Mean verses Theortical Mean
+# Sample Mean verses Theortical Mean
 
 ```{r}
 theory_mean <- 1/lambda
 theory_mean
-simDist <- round(mean(data_mean), 3)
-simDist
+simulatedDistribution_mean <- round(mean(data_mean), 3)
+simulatedDistribution_mean
 ```
 
+# Sample Variance verses Theoretical Variance
 
 ```{r}
-dataDF <- data.frame(data_mean)
-grph <- ggplot(dataDF, aes(x=data_mean))
-grph <- grph + geom_histogram(aes(y=..density..))
-grph + geom_density(colour="red", size=1)
+samVariance <- round(var(data_mean), 3)
+samStDev <- round(sd(data_mean), 3)
+
+theoryVariance <- round(((1/lambda)^2)/n, 3)
+theoryStDev <- round((1/lambda)/sqrt(n), 3)
+
+
 ```
 
-How well does the 
-Now, analyize the theoretical and simulation and distribution variance
-
-Sample Variance verses Theoretical Variance
+A table showing the sample verses the theoretical variance and standard deviation.
 
 ```{r}
-theoryVar <- round(((1/lambda)^2)/n, 3)
-theorySD <- round((1/lambda)/sqrt(n), 3)
-theoryVar
-theorySD
+df <- rbind(c(samVariance, samStDev), c(theoryVariance, theoryStDev))
+
+row.names(df) <- c("Sample", "Theoretical")
+colnames(df) <- c("Variance", "Stand Dev")
+df
 ```
 
-Does the exponential distribution approximate a normal distribution?
+# Distribution Approximately Normally Distributed?
 
-Distribution Approximately Normally Distributed?
+```{r}
+qqnorm(data_mean); qqline(data_mean)
+```
+
+The Q-Q Plot shows that the exponential distribution is approximately normal, except in the tails.
