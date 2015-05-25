@@ -15,11 +15,13 @@ Where:
 
 * Lambda is the rate
 
+* n is the number of exponentials 
+
 * mean of the exponential distribution is 1 / lambda
 
 * Standard Deviation for the exponential distribution is 1 / lambda.
 
-For this investigation lambda is fixed at 0.2 for all trials. We investigate the averages of 40 exponentials and we under take a 1000 replications.
+For this investigation lambda is fixed at 0.2 for all trials. We investigate the averages of 40 exponentials and we run a 1000 replications.
 
 This investigation will answer cover 3 areas:
 
@@ -31,18 +33,19 @@ This investigation will answer cover 3 areas:
 
 # Initial setup
 
+set up the variables and generate a set of data to work with.  
+
 ```{r}
-library(ggplot2)
 numberOfSimulations <- 1000
 n <- 40
 lambda <- 0.2
 set.seed(1234)
 data <- matrix(rexp(numberOfSimulations * n, rate=lambda), numberOfSimulations)
+# take the mean or average of the generated data
 data_mean <- apply(data, 1, mean)
-hist(data_mean, main="Distribution of averages")
 ```
 
-# Sample Mean verses Theortical Mean
+# Sample Mean verses Theoretical Mean
 
 ```{r}
 theory_mean <- 1/lambda
@@ -63,17 +66,25 @@ theoryStDev <- round((1/lambda)/sqrt(n), 3)
 
 ```
 
-A table showing the sample verses the theoretical variance and standard deviation.
+Use a table to gather the theoretical and sample means, variances and standard deviations together to make comparing easier.
 
 ```{r}
-df <- rbind(c(samVariance, samStDev), c(theoryVariance, theoryStDev))
+df <- rbind(c(simulatedDistribution_mean, samVariance, samStDev), c(theory_mean, theoryVariance, theoryStDev))
 
 row.names(df) <- c("Sample", "Theoretical")
-colnames(df) <- c("Variance", "Stand Dev")
+colnames(df) <- c("Mean", "Variance", "Stand Dev")
 df
 ```
 
 # Distribution Approximately Normally Distributed?
+
+Does a histogram of the data look normal?
+
+```{r}
+hist(data_mean, main="Distribution of averages")
+```
+
+The histogram looks close to normal.  However, utilizing a Q-Q plot will tell us more.
 
 ```{r}
 qqnorm(data_mean); qqline(data_mean)
